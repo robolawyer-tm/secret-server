@@ -19,7 +19,10 @@ pkg update -y && pkg upgrade -y
 
 # 2. Install dependencies
 echo "🔧 Step 2/5: Installing dependencies (Python, GPG, Git)..."
+# Note: cryptography may require build tools on Termux (clang, rust) and OpenSSL headers
+# Install them if you encounter build errors: pkg install clang rust openssl-dev libffi-dev -y
 pkg install python gnupg git -y
+
 
 # 3. Clone or update repository
 INSTALL_DIR="$HOME/secret-server"
