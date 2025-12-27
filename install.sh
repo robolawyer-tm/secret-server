@@ -19,24 +19,33 @@ pkg update -y && pkg upgrade -y
 
 # 2. Install dependencies
 echo "🔧 Step 2/5: Installing dependencies (Python, GPG, Git)..."
+# Note: cryptography may require build tools on Termux (clang, rust) and OpenSSL headers
+# Install them if you encounter build errors: pkg install clang rust openssl-dev libffi-dev -y
 pkg install python gnupg git -y
 
+
 # 3. Clone or update repository
-INSTALL_DIR="$HOME/payload-persist"
+INSTALL_DIR="$HOME/secret-server"
 if [ -d "$INSTALL_DIR" ]; then
     echo "📂 Step 3/5: Repository already exists, updating..."
     cd "$INSTALL_DIR"
-    git pull origin secret-server
+    git pull origin main
 else
     echo "📂 Step 3/5: Cloning repository..."
     cd "$HOME"
-    git clone -b secret-server https://github.com/JohnBlakesDad/payload-persist.git
+    git clone https://github.com/JohnBlakesDad/secret-server.git
     cd "$INSTALL_DIR"
 fi
 
 # 4. Install Python requirements
-echo "🐍 Step 4/5: Installing Python libraries..."
+echo "🐍 Step 4/5: Installing Python libraries into a virtualenv..."
+# Create a venv named 'venv' and install requirements inside it
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
+# Deactivate to avoid leaving venv active in the installer
+deactivate || true
 
 # 5. Create command alias
 echo "🔗 Step 5/5: Creating 'secret-server' command..."

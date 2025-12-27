@@ -1,2 +1,4 @@
 Flask==3.0.0
 python-gnupg==0.5.1
+cryptography>=41.0.0
+pytest>=7.0

@@ -31,8 +31,12 @@ def login():
     
     if auth.check_auth(username, password):
         session['username'] = username
-        session['password'] = password  # Store for backend operations
-        return jsonify({'success': True, 'username': username, 'password': password})
+        # Create server-side session id and store encrypted credentials
+        session_id = os.urandom(24).hex()
+        session['session_id'] = session_id
+        from lib import session_store
+        session_store.save_session_credentials(session_id, username, password)
+        return jsonify({'success': True, 'username': username})
     else:
         return jsonify({'error': 'Invalid credentials'}), 401
 
@@ -54,14 +58,22 @@ def register():
     # Create new user
     if auth.save_auth(username, password):
         session['username'] = username
-        session['password'] = password
-        return jsonify({'success': True, 'username': username, 'password': password})
+        # Create server-side session id and store encrypted credentials
+        session_id = os.urandom(24).hex()
+        session['session_id'] = session_id
+        from lib import session_store
+        session_store.save_session_credentials(session_id, username, password)
+        return jsonify({'success': True, 'username': username})
     else:
         return jsonify({'error': 'Registration failed'}), 500
 
 @app.route('/api/auth/logout', methods=['POST'])
 def logout():
     """Clear session"""
+    session_id = session.get('session_id')
+    if session_id:
+        from lib import session_store
+        session_store.clear_session(session_id)
     session.clear()
     return jsonify({'success': True})
 
@@ -70,9 +82,8 @@ def check_auth_status():
     """Check if user is authenticated"""
     if 'username' in session:
         return jsonify({
-            'authenticated': True, 
-            'username': session['username'],
-            'password': session.get('password')
+            'authenticated': True,
+            'username': session['username']
         })
     return jsonify({'authenticated': False})
 
@@ -121,7 +132,13 @@ def store_secret():
         return jsonify({'error': 'Missing required fields'}), 400
     
     username = session['username']
-    user_password = session['password']
+    session_id = session.get('session_id')
+    if not session_id:
+        return jsonify({'error': 'Missing session credentials; please login again'}), 401
+    from lib import session_store
+    user_password = session_store.get_session_password(session_id)
+    if not user_password:
+        return jsonify({'error': 'Missing session credentials; please login again'}), 401
     
     try:
         # Encrypt the secret
@@ -159,7 +176,13 @@ def retrieve_secret():
         return jsonify({'error': 'Missing required fields'}), 400
     
     username = session['username']
-    user_password = session['password']
+    session_id = session.get('session_id')
+    if not session_id:
+        return jsonify({'error': 'Missing session credentials; please login again'}), 401
+    from lib import session_store
+    user_password = session_store.get_session_password(session_id)
+    if not user_password:
+        return jsonify({'error': 'Missing session credentials; please login again'}), 401
     
     try:
         result = storage.retrieve_latest_payload(username, app_name, user_password)
@@ -205,7 +228,13 @@ def update_secret():
         return jsonify({'error': 'Missing required fields'}), 400
     
     username = session['username']
-    user_password = session['password']
+    session_id = session.get('session_id')
+    if not session_id:
+        return jsonify({'error': 'Missing session credentials; please login again'}), 401
+    from lib import session_store
+    user_password = session_store.get_session_password(session_id)
+    if not user_password:
+        return jsonify({'error': 'Missing session credentials; please login again'}), 401
     
     try:
         # 1. Retrieve existing secret
