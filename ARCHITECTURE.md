@@ -139,6 +139,13 @@ Key Security Tools/Practices: [e.g., WAF, regular security audits]
 
 Local Setup Instructions: [Link to CONTRIBUTING.md or brief steps]
 
+### Termux (Android) notes
+If you are developing or running the server on Android via Termux, follow these quick guidelines:
+- Update Termux and install base/build dependencies: `pkg update && pkg upgrade -y && pkg install -y python git curl gnupg clang rust openssl-dev libffi-dev`.
+- Prefer using a Python virtualenv (`python -m venv venv && source venv/bin/activate`) before installing `pip` packages.
+- If `cryptography` fails to build, ensure `clang`, `rust` and the OpenSSL headers are available (see install script for guidance).
+- Set a persistent `MASTER_KEY` environment variable (or allow the server to create `server_state/master.key`) to enable server-side encrypted session storage.
+
 Testing Frameworks: [e.g., Jest, Pytest, JUnit]
 
 Code Quality Tools: [e.g., ESLint, Black, SonarQube]
