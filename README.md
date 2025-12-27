@@ -82,19 +82,56 @@ Transparency is part of the design — read the code, verify the flow, and trust
 
 ---
 
-## 🚀 One‑Step Installation (Termux)
+## 🚀 Termux Installation (recommended)
 
-Copy and paste this into Termux:
+**Quick (one-line)** — download and run the installer (review it first):
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/JohnBlakesDad/secret-server/main/install.sh | bash
-.
+curl -sSL https://raw.githubusercontent.com/JohnBlakesDad/secret-server/main/install.sh -o install.sh
+# Inspect the script, then run it:
+less install.sh
+bash install.sh
+```
+
+**Safer (recommended) — manual steps:**
+
+```bash
+# 1. Update packages
+pkg update && pkg upgrade -y
+
+# 2. Install base + build deps (required for building cryptography on some devices)
+pkg install -y python git curl gnupg clang rust openssl-dev libffi-dev
+
+# 3. Clone repo and create a virtualenv
+git clone https://github.com/JohnBlakesDad/secret-server.git
+cd secret-server
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 4. Set a persistent MASTER_KEY (required for encrypted session storage) or allow it to be created in server_state/master.key
+export MASTER_KEY=$(python - <<'PY'
+from cryptography.fernet import Fernet
+print(Fernet.generate_key().decode())
+PY
+)
+
+# 5. Start the server (or use the provided shortcut)
+./start_server.sh
+```
+
+**Notes & tips**
+- Inspect `install.sh` before running remote code. Use the manual flow if you prefer more control. ⚠️
+- If `cryptography` fails to install, make sure `clang`, `rust`, `openssl-dev`, and `libffi-dev` are present (see step 2).
+- `start_server.sh` will create a `venv` automatically if it doesn't exist and attempt to install requirements.
+- The installer adds an alias `secret-server` to your shell config (e.g., `~/.bashrc`) to make starting easier.
 
 ## 🧹 Uninstallation
 
 To remove everything cleanly:
 ```bash
-cd ~/payload-persist && ./uninstall.sh
+cd ~/secret-server && ./uninstall.sh
 ```
 
 ---
