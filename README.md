@@ -1,68 +1,100 @@
 # Secret Server
 
-**Secret Server** is a phone-friendly and transparent web app that allows you to safely store data such as passwords or more. The web side is a client that encrypts and sends data to a server that leverages file system hierarchy to store encrypted json files, 
+### Simple. Transparent. Secure.
 
-It turns your phone into a local-first vault, where your data stays on your hardware and moves only over your own Wi-Fi.
+**Secret Server** is a phone‑friendly, local‑first web app that lets you safely store sensitive data such as passwords, notes, or anything else you want encrypted and under your control.  
+Your browser encrypts the data *before* it leaves your device, and the server stores only encrypted JSON payloads.
+
+It turns your phone into a personal vault — where your data stays on your hardware and moves only across your own Wi‑Fi.
 
 ---
 
-## 🛡️ How it works (The Simple Flow)
+## 🛡️ How It Works (The Simple Flow)
 
-It consists of these components:
+Secret Server is built from four small, clear components:
 
-1.  **Vivify**: This is the interface. It organizes your data.
-2.  **Secrecy**: This is the lock. It scrambles (encrypts) your data on your device.
-3.  **Payload**: This is the box. It packs the scrambled data for storage.
-4.  **Server**: This is the shelf. It stores the boxes safely.
+1. **Vivify** – The interface. It organizes your data.
+2. **Secrecy** – The lock. It encrypts your data in the browser.
+3. **Payload** – The box. It packages encrypted data for storage.
+4. **Server** – The shelf. It stores the encrypted payloads.
 
-**Because the "lock" (Secrecy) happens before the data (as payload) is sent and stored, the Server and (potentially) others only see encrypted data**
+Because encryption happens *before* anything is sent, the server (and anyone who might access it) sees only scrambled data.
+
+---
+
+## 🔑 Two Password Layers (Important)
+
+Secret Server uses **two different passwords**, each serving a different purpose:
+
+### 1. Login Password (UI Access)
+- Unlocks the Vivify interface.
+- Prevents casual access to the app on your phone.
+- **Not** used for encryption.
+
+### 2. Secret Password (Encryption Key)
+- This password actually encrypts your data.
+- Used to derive the encryption key inside the browser.
+- Never sent to the server.
+
+### Convenience Note
+For ease of use, the login password is **pre-filled** into the “Secret Password” field.  
+However, users may **replace it with a different password** if they want stronger separation between:
+
+- UI access  
+- Data encryption  
+
+This gives users flexibility:  
+**one password for convenience, or two passwords for stronger compartmentalization.**
+
+---
+
+## 🔒 Security & Safety Notes (Important)
+
+Secret Server is intentionally **local‑first**. To keep it safe:
+
+### ✔ Use it only on networks you trust
+- Your home Wi‑Fi  
+- Your phone’s personal hotspot  
+- A private network you control  
+
+### ✔ Avoid public Wi‑Fi
+Even though data is encrypted, public networks add unnecessary risk.
+
+### ✔ Never expose the server to the open internet
+This app is designed for simplicity and local use.  
+Do **not** port‑forward it or run it on a public IP.
+
+### ✔ Keep your phone locked and updated
+Your phone is the vault. Treat it like one.
+
+### ✔ Remember: the server stores only encrypted payloads
+Even if someone accessed the storage, they would see only scrambled JSON.
 
 ---
 
 ## 🔍 Please Audit
 
-- **Encryption Logic**: Check [`lib/crypto.py`](lib/crypto.py).
-- **Storage Logic**: Check [`lib/storage.py`](lib/storage.py).
-- **Web Server**: Check [`web_server.py`](web_server.py).
+- **Encryption Logic:** See `lib/crypto.py`  
+- **Storage Logic:** See `lib/storage.py`  
+- **Web Server:** See `web_server.py`
+
+Transparency is part of the design — read the code, verify the flow, and trust what you can see.
 
 ---
 
-## 🚀 One-Step Installation (Termux)
+## 🚀 One‑Step Installation (Termux)
 
-Copy and paste this into Termux to get started:
+Copy and paste this into Termux:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/JohnBlakesDad/payload-persist/secret-server/install.sh | bash
-```
-
-Usage:
-- Type `secret-server` to start the engine manually.
-
----
-
-## Using the web interface
-
-Open `http://localhost:5001` in a browser (Chrome).
-
-## 📱 Running Automatically (Start on Boot)
-
-If you want Secret Server to start every time you turn on your phone:
-
-1.  **Install the "Termux:Boot" app** (available on F-Droid).
-2.  **Open the app once** to register it.
-3.  **That's it!** The installation script already placed the boot script in the right place.
-
----
-
-## 🏗 Architecture
-
-For a more detailed technical look, read the [ARCHITECTURE.md](ARCHITECTURE.md).
+curl -sSL https://raw.githubusercontent.com/JohnBlakesDad/secret-server/main/install.sh | bash
+.
 
 ## 🧹 Uninstallation
 
 To remove everything cleanly:
 ```bash
-cd ~/secret-server && ./uninstall.sh
+cd ~/payload-persist && ./uninstall.sh
 ```
 
 ---
