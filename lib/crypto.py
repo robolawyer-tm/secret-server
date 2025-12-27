@@ -1,6 +1,4 @@
 import base64
-<<<<<<< HEAD
-=======
 import os
 from typing import Optional
 
@@ -9,17 +7,13 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
 
->>>>>>> origin/main
 
 class CryptoResult:
     def __init__(self, ok: bool, data: bytes = b"", status: str = ""):
         self.ok = ok
         self.data = data
         self.status = status
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/main
     def __str__(self):
         # represent encrypted data as base64 string
         return base64.b64encode(self.data).decode('utf-8')
@@ -72,11 +66,6 @@ def encrypt_secret(plaintext: str, passphrase: str) -> CryptoResult:
 
 
 def decrypt_secret(encrypted_text: str, passphrase: str) -> CryptoResult:
-<<<<<<< HEAD
-    try:
-        data = base64.b64decode(encrypted_text.encode('utf-8'))
-        return CryptoResult(True, data=data)
-=======
     """Decrypt a base64-encoded (salt || token) value using the passphrase."""
     if passphrase is None or passphrase == "":
         return CryptoResult(False, status="Passphrase required")
@@ -91,6 +80,5 @@ def decrypt_secret(encrypted_text: str, passphrase: str) -> CryptoResult:
         f = Fernet(fernet_key)
         plaintext = f.decrypt(token)
         return CryptoResult(True, data=plaintext)
->>>>>>> origin/main
     except Exception as e:
         return CryptoResult(False, status=str(e))
