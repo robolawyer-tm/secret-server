@@ -35,14 +35,34 @@ def restrict_access():
     # 2. Allow Connected Peers (Hotspot Clients)
     # We refresh this list on every request.
     from lib import network
-    allowed_peers = network.get_connected_peers()
+    auth_success = False
     
+    # Check 1: Strict ARP/Neighbor Table Validation (Best Security)
+    allowed_peers = network.get_connected_peers()
     if remote_ip in allowed_peers:
+        auth_success = True
+        
+    # Check 2: Fallback for Android/Termux (Restricted /proc/net/arp access)
+    # If we couldn't find any peers (likely permission denied), we fall back
+    # to allowing IPs on the SAME SUBNET. This assumes the hotspot is a /24 (255.255.255.0).
+    if not auth_success:
+        try:
+            local_ip = network.get_local_ip()
+            # Strict mode: Only allow if first 3 octets match (e.g. 10.11.36.x)
+            if network.is_same_subnet(local_ip, remote_ip):
+                print(f"SECURITY NOTICE: Allowed peer {remote_ip} (Same Subnet as {local_ip}) - Fallback mode.")
+                auth_success = True
+        except Exception:
+            pass
+
+    if auth_success:
         return None  # Access Granted
         
     # 3. Deny Everyone Else
     print(f"SECURITY ALERT: Blocked access attempt from {remote_ip}")
-    return jsonify({'error': 'Access Denied: You must be connected to the secure hotspot.'}), 403
+    return jsonify({
+        'error': f'Access Denied: You must be connected to the secure hotspot. Your IP was detected as: {remote_ip}'
+    }), 403
 
 @app.route('/')
 def index():

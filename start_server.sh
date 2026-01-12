@@ -6,7 +6,7 @@
 echo "Starting Secret Server..."
 if [ ! -d "venv" ]; then
     echo "Creating Python virtualenv 'venv' and installing requirements..."
-    python -m venv venv
+    python3 -m venv venv
     source venv/bin/activate
     pip install --upgrade pip
     if [ -f requirements.txt ]; then
