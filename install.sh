@@ -159,7 +159,7 @@ echo "📱 Optional: Auto-start on boot"
 echo "   To make Secret Server start automatically:"
 echo "   1. Install 'Termux:Boot' from F-Droid"
 echo "   2. Open Termux:Boot once to register it"
-echo "   3. Run: mkdir -p ~/.termux/boot && cp $INSTALL_DIR/termux_boot.sh ~/.termux/boot/"
+echo "   3. Run: mkdir -p ~/.termux/boot && cp $INSTALL_DIR/start_secret-server.sh ~/.termux/boot/"
 echo ""
 
 echo "========================================="
