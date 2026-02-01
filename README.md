@@ -90,7 +90,7 @@ Transparency is part of the design — read the code, verify the flow, and trust
 
 ```bash
 # Download and inspect first (recommended):
-curl -fsSL https://raw.githubusercontent.com/JohnBlakesDad/secret-server/main/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/robolawyer-tm/secret-server/main/install.sh -o install.sh
 less install.sh
 bash install.sh
 ```
@@ -106,7 +106,7 @@ pkg update && pkg upgrade -y
 pkg install -y python git clang rust openssl libffi
 
 # 3. Clone repo and create a virtualenv
-git clone https://github.com/JohnBlakesDad/secret-server.git
+git clone https://github.com/robolawyer-tm/secret-server.git
 cd secret-server
 python -m venv venv
 source venv/bin/activate

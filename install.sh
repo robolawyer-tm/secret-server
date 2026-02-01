@@ -119,7 +119,7 @@ if [ -d "$INSTALL_DIR" ]; then
 else
     echo "📂 Step 3/5: Cloning repository..."
     cd "$HOME"
-    git clone https://github.com/JohnBlakesDad/secret-server.git
+    git clone https://github.com/robolawyer-tm/secret-server.git
     cd "$INSTALL_DIR"
 fi
 
